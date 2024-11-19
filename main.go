@@ -22,24 +22,24 @@ import (
 func main() {
 	//1.加载配置
 	if err := settings.Init(); err != nil {
-		fmt.Printf("init settings failed. err:%v\n", err)
+		fmt.Printf("init settings failed, err:%v\n", err)
 		return
 	}
 
 	//2.初始化日志
-	if err := logger.Init(); err != nil {
-		fmt.Printf("init mysql failed.err:%v\n", err)
+	if err := logger.Init(settings.Conf.LogConfig, settings.Conf.Mode); err != nil {
+		fmt.Printf("init logger failed, err:%v\n", err)
 	}
 	defer zap.L().Sync() //延迟注册，将缓冲区日志追加到文件中
 
 	//3.初始化MySQL连接
-	if err := mysql.Init(); err != nil {
+	if err := mysql.Init(settings.Conf.MySQLConfig); err != nil {
 		fmt.Printf("init mysql failed, err:%v\n", err)
 	}
 	defer mysql.Close()
 
 	//4.初始化Redis连接
-	if err := redis.Init(); err != nil {
+	if err := redis.Init(settings.Conf.RedisConfig); err != nil {
 		fmt.Printf("init redis failed, err:%v\n", err)
 	}
 	defer redis.Close()
